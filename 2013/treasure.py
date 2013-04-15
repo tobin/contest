@@ -13,6 +13,9 @@ from collections import Counter
 
 debug = 0
 
+# For some test cases there are not sufficient keys present in the
+# problem to unlock all of the chests.  This can be checked trivially
+# before beginning the solution search.
 def enough_keys_exist(chests, keys, key_req, keys_inside):
     keys_needed = Counter([key_req[c] for c in chests])
 
