@@ -61,26 +61,6 @@ def solve(chests, keys, key_req, keys_inside):
 
     return 0
 
-def verify_solution(chests, keys, key_req, keys_inside, solution):
-    print "--- Verification ---"
-    for c in solution:
-        if debug > 2:
-            print "Chests to be opened: " + str(chests) 
-            print " Keys in hand: " + str(keys)
-        k = key_req[c]
-        if debug > 2:
-            print "Opening chest %d with key %d revealing key " % (c, k)  + str(keys_inside[c])
-        if not k in keys:
-            print "I don't have that key - FAILURE!"
-            return 0
-        keys = keys - Counter({k}) + keys_inside[c]
-        chests = chests - {c}
-    if chests:        
-        print "Not all chests opened - FAILURE!"
-        return 0
-    print "Verification SUCCESS"
-    return 1
-
 # T: number of test cases
 T = int(raw_input())
 if debug:
@@ -129,8 +109,6 @@ for t in range(0,T):
     else:
         solution = solve(frozenset(chests), keys, key_req, keys_inside)
     if isinstance(solution, list):
-        if debug:
-            verify_solution(chests, keys, key_req, keys_inside, solution)
         print " ".join(map(str,solution))
     else:
         print "IMPOSSIBLE"
