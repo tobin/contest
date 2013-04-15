@@ -1,10 +1,17 @@
 #!/usr/bin/python
+
+# Google Code Jam 2013 - Qualification Round - Problem D
+#
+# This code is able to solve the "small" input correctly in less than
+# 0.1 seconds, and the "large" input (also correctly) in about 10
+# seconds.
+#
+# Tobin Fricke 2013-04-13
+
 import sys
 from collections import Counter
 
 debug = 0
-
-# Tobin Fricke 2013-04-13
 
 # chests: set of unopened chests
 # keys: multiset of keys that I have
