@@ -3,8 +3,8 @@
 # Google Code Jam 2013 - Qualification Round - Problem D
 #
 # This code is able to solve the "small" input correctly in less than
-# 0.1 seconds, and the "large" input (also correctly) in about 10
-# seconds.
+# 0.1 seconds, and the "large" input (also correctly) in about 1.5 
+# seconds on a Thinkpad T410.
 #
 # Tobin Fricke 2013-04-13
 
