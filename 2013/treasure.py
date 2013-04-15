@@ -22,7 +22,7 @@ def enough_keys_exist(chests, keys, key_req, keys_inside):
     keys_available = keys
 
     for c in chests:
-        keys_available = keys_available + keys_inside[c]
+        keys_available += keys_inside[c]
 
     for k in keys_needed:
         if keys_available[k] < keys_needed[k]:
@@ -33,14 +33,17 @@ def enough_keys_exist(chests, keys, key_req, keys_inside):
 
 # Verify that all needed key types may still be reachable
 def still_possible(chests, keys, key_req, keys_inside):
+    keys = set(keys)
+    chests = chests.copy()
+
     def openable(chest):
         return key_req[chest] in keys
 
     openable_chests = filter(openable, chests)
     while openable_chests:
         for chest in openable_chests:
-            keys = keys + keys_inside[chest]
-            chests = chests - {chest}
+            keys |= set(keys_inside[chest])
+            chests.remove(chest)
         openable_chests = filter(openable, chests)
     return not chests
 
@@ -117,7 +120,7 @@ for t in range(0,T):
         solution_exists = False
     else:
         # Now begin the search:
-        solution_exists, solution = solve(frozenset(chests), keys, key_req, keys_inside)
+        solution_exists, solution = solve(chests, keys, key_req, keys_inside)
 
     if solution_exists:
         print " ".join(map(str,solution))
