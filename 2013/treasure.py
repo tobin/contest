@@ -11,8 +11,6 @@ debug = 0
 # keys_req: dictionary chest-->key req
 # keys_inside: dictionary chest-->set of keys inside
 
-memo = {}
-
 # Really, this only needs to be called once for a given problem
 def impossible(chests, keys, key_req, keys_inside):
     keys_needed = Counter([key_req[c] for c in chests])
@@ -50,18 +48,11 @@ def solve(chests, keys, key_req, keys_inside):
         k = key_req[c]
         if k in keys:
             n = keys_inside[c]
-            result = solve_memoized(chests - {c}, (keys - Counter({k})) + n, key_req, keys_inside)
+            result = solve(chests - {c}, (keys - Counter({k})) + n, key_req, keys_inside)
             if isinstance(result, list):
                 return [c] + result
 
     return 0
-
-def solve_memoized(chests, keys, key_req, keys_inside):
-    if chests in memo:
-        return memo[chests]
-    result =  solve(chests, keys, key_req, keys_inside)
-    memo[chests] = result
-    return memo[chests]
 
 def verify_solution(chests, keys, key_req, keys_inside, solution):
     print "--- Verification ---"
@@ -89,7 +80,6 @@ if debug:
     print "=== %d test cases ===" % T
 
 for t in range(0,T):
-    memo = {}
     if debug:
         print ""
     sys.stdout.write("Case #%d: " % (t+1))
@@ -130,7 +120,7 @@ for t in range(0,T):
     if impossible(chests, keys, key_req, keys_inside):
         solution = 0
     else:
-        solution = solve_memoized(frozenset(chests), keys, key_req, keys_inside)
+        solution = solve(frozenset(chests), keys, key_req, keys_inside)
     if isinstance(solution, list):
         if debug:
             verify_solution(chests, keys, key_req, keys_inside, solution)
