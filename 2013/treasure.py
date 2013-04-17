@@ -50,6 +50,10 @@ def still_possible(chests, keys, key_req, keys_inside):
 # Greedy, iterative algorithm
 def solve(chests, keys, key_req, keys_inside):
 
+    # First check the global constraint to make sure a solution isn't obviously impossible
+    if not enough_keys_exist(chests, keys, key_req, keys_inside):
+        return False, None
+
     solution = []
 
     for position in range(0, len(chests)):
@@ -124,12 +128,7 @@ for t in range(0,T):
     chests = set(range(1, N+1))
     sys.stdout.flush()
 
-    # First check the global constraint to make sure a solution isn't obviously impossible
-    if not enough_keys_exist(chests, keys, key_req, keys_inside):
-        solution_exists = False
-    else:
-        # Now begin the search:
-        solution_exists, solution = solve(chests, keys, key_req, keys_inside)
+    solution_exists, solution = solve(chests, keys, key_req, keys_inside)
 
     if solution_exists:
         print " ".join(map(str,solution))
@@ -137,5 +136,3 @@ for t in range(0,T):
         print "IMPOSSIBLE"
 
     sys.stdout.flush()
-
-
