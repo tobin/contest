@@ -47,27 +47,36 @@ def still_possible(chests, keys, key_req, keys_inside):
         openable_chests = filter(openable, chests)
     return not chests
 
-# Backtracking depth-first search
+# Greedy, iterative algorithm
 def solve(chests, keys, key_req, keys_inside):
 
-    # If no more chests remain to be opened, then a solution has been found.
-    if not chests:
-        return True, []
+    solution = []
 
-    # Check whether we should pursue this branch at all
-    if not still_possible(chests, keys, key_req, keys_inside):
-        return False, None
+    for position in range(0, len(chests)):
+        for c in sorted(chests):
+            # Skip this chest if we can't open it:
+            if not key_req[c] in keys:
+                continue
+            # Open the chest:
+            keys[key_req[c]] -= 1
+            chests.remove(c)
+            keys += keys_inside[c]
+            # Make sure there's still a way to obtain all needed keys:
+            if still_possible(chests, keys, key_req, keys_inside):
+                break
+            # Re-wind before trying the next chest
+            chests.add(c)
+            keys -= keys_inside[c]
+            keys[key_req[c]] += 1
+        else:
+            # Could not open any chest --> no solution
+            # This code will never be reached!
+            print "FAIL"
+            return False, None  
 
-    # Try to open chests...
-    for c in sorted(list(chests)):
-        k = key_req[c]
-        if k in keys:
-            n = keys_inside[c]
-            success, solution = solve(chests - {c}, (keys - Counter({k})) + n, key_req, keys_inside)
-            if success:
-                return True, [c] + solution
+        solution.append(c)
 
-    return False, None
+    return True, solution
 
 
 # "The first line of the input gives the number of test cases, T."
