@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -68,30 +69,27 @@ int solve(set<int> chests, multiset<int> keys, int key_req[], multiset<int> keys
   while (!chests.empty()) {
     for (set<int>::iterator c=chests.begin(); c != chests.end(); *c ++) {
       // Skip this chest if we can't open it
-      int chest = *c;
-      int key = key_req[chest];
+
+      int key = key_req[*c];
       if (keys.count(key)==0) {
 	if (debug) 
-	  cout << "Can't open chest " << chest + 1 << " because I don't have key " << key << endl;
+	  cout << "Can't open chest " << *c + 1 << " because I don't have key " << key << endl;
 	continue;
       }
 
       // Open the chest
       keys.erase(keys.find(key));
-      set<int> new_chests = chests;
-      new_chests.erase(chest);
+      int chest = *c;
+      c = chests.erase(c);  // requires C++11
 
       if (debug) {
-	cout << "After removing chest " << chest+1 << ", new_chests contains: ";
-	for (set<int>::iterator x=new_chests.begin(); x != new_chests.end(); *x ++) 
+	cout << "After removing chest " << *c + 1 << ", chests contains: ";
+	for (set<int>::iterator x=chests.begin(); x != chests.end(); *x ++) 
 	  cout << *x + 1 << " ";
 	cout << endl;
       }
 
-      // insert keys_inside into keys
-      for (multiset<int>::iterator k = keys_inside[chest].begin(); k != keys_inside[chest].end(); *k ++) {
-	keys.insert(*k);
-      }
+      keys.insert(keys_inside[chest].begin(), keys_inside[chest].end());
 
       if (debug) {
 	cout << "I have these keys: ";
@@ -101,8 +99,7 @@ int solve(set<int> chests, multiset<int> keys, int key_req[], multiset<int> keys
       }
 
       // Test
-      if (still_possible(new_chests, keys, key_req, keys_inside)) {
-	chests = new_chests;    
+      if (still_possible(chests, keys, key_req, keys_inside)) {
 	solution.push_back(chest + 1);
 	break;
       }
@@ -110,11 +107,14 @@ int solve(set<int> chests, multiset<int> keys, int key_req[], multiset<int> keys
 	cout << "Had to unopen chest " << chest + 1 << endl;
       // Rewind
       keys.insert(key);
-      //chests.insert(*c);      
-      // remove keys_inside from keys
-      for (multiset<int>::iterator k = keys_inside[chest].begin(); k != keys_inside[chest].end(); *k ++) {
-	keys.erase(keys.find(*k));
-      }
+      c = chests.insert(c, chest);
+      // why is it so hard to do "keys -= keys_inside[chest]" in C++ ?!
+      multiset<int> temp;
+      std::set_difference(keys.begin(), keys.end(), 
+			  keys_inside[chest].begin(), keys_inside[chest].end(), 
+			  std::inserter(temp, temp.begin()));
+      keys.swap(temp);
+
     }
   }
 
@@ -123,6 +123,8 @@ int solve(set<int> chests, multiset<int> keys, int key_req[], multiset<int> keys
   copy(solution.begin(), solution.end(),
        ostream_iterator<int>(cout, " "));
   cout << endl;
+
+  return 0;
 }
 
 
