@@ -54,6 +54,10 @@ def solve(chests, keys, key_req, keys_inside):
     if not enough_keys_exist(chests, keys, key_req, keys_inside):
         return False, None
 
+    # Make sure all keys are potentially reachable
+    if not still_possible(chests, keys, key_req, keys_inside):
+        return False, None
+
     solution = []
 
     for position in range(0, len(chests)):
