@@ -1,0 +1,175 @@
+
+Using Wikipedia's letter frequency chart:
+
+0.5404411764705882
+0.5473197343453511
+0.5494704992435704
+0.30656070341562397
+0.6311224489795918
+0.444493006993007
+0.29890829694323146
+0.48497854077253216
+0.35532516493873706
+0.3
+Total is 4.458620
+
+
+Using the letter frequencies in the supplied documents:
+
+0.5430672268907563
+0.5448292220113852
+0.5509833585476551
+0.30656070341562397
+0.6224489795918368
+0.4405594405594406
+0.2960698689956332
+0.48266754704522946
+0.3600377002827521
+0.3054545454545455
+Total is 4.452679
+
+
+Woops, it turns out I wasn't considering the probability distribution
+of the keytext.  Fixing that I now get:
+
+42c42
+<       float score = 1.0;
+---
+>       float score = frequencies[c - 'A'];
+
+
+0.6131827731092437
+0.6153937381404174
+0.6186081694402421
+0.38468041934392966
+0.6776785714285715
+0.5472027972027972
+0.3818777292576419
+0.5460548035655332
+0.4524033930254477
+0.37363636363636366
+Total is 5.210719
+
+Doing digraphs (two characters at a time):
+
+0.8316701680672269
+0.8277988614800759
+0.8290468986384266
+0.49086912411227596
+0.8979591836734694
+0.7290209790209791
+0.48624454148471613
+0.7405084186200066
+0.6192271442035815
+0.4690909090909091
+Total is 6.921436
+
+
+Markov chain style digraphs:
+0.7226890756302521
+0.7217741935483871
+0.7354009077155824
+0.36168413933040244
+0.8334183673469387
+0.6079545454545454
+0.362882096069869
+0.646748101683724
+0.5334590009425071
+0.35454545454545455
+Total is 5.880556
+
+
+Going to trigraphs:
+0.9648109243697479
+0.9577798861480076
+0.9576399394856279
+0.6515049036185323
+0.9873724489795919
+0.8894230769230769
+0.6410480349344978
+0.9105315285572796
+0.8303487276154571
+0.6263636363636363
+Total is 8.416823
+
+Trigraphs give a score of 82.53% on submission (5th place).  There's a
+cluster of five scores in the 81-84% range, then one at 97.15 (Klink)
+and one at 99.05 (Psyho).
+
+The trigraphs program approaches the maximum time on one of the
+trials. (It runs in 16 seconds, with a limit of 20.)
+
+
+Tests:	Score	N       M	keytext				plaintext
+0	0.96	6	3808	thepitandthependulum-conv.txt	wrnpc12-conv.txt	
+1	0.96	6	8432	ttlg-conv.txt
+2	0.96	6	6610
+3	0.65	3	5914
+4	0.99	7	7840	
+5	0.89	5	2288
+6	0.64	3	4580
+7	0.91	5	3029	
+8	0.83	4	1061	thepitandthependulum-conv.txt	tomsawyer-conv.txt
+9	0.63	3	1100	ttlg-conv.txt			wutheights-conv.txt
+mean 0.84
+
+
+53	out of    676 ( 7.8%) digraphs do not appear
+8726	out of  17576 (50%) trigraphs do not appear
+381795  out of 456976 (84%) 4graphs do not appear
+
+
+N-graph   #possible   #appear
+1	      26           26
+2	     676	  623
+3	   17576	 8850
+4	  456976	75181	      
+5                      341822
+6		       898367
+7		      1641953
+
+The most popular 4-graphs:
+
+16134   THAT	 
+16118   THER
+12689   NTHE
+12204   DTHE
+11953   WITH
+10904   OFTH
+10758   THES
+10467   OTHE
+10307   FTHE
+9990    TTHE
+9596    HERE
+
+Out of 5061920 total occurances
+
+[Sat Aug 23 20:08:26 CDT 2008]
+
+My trigraph entry is now down to 22nd place.  Seven entries have
+scores above 98%. )-:
+
+Changed my probabilities a little and got up to 83.88, 20th place.
+    
+
+
+TUESDAY
+
+Viterbi algorithm decoding on tri-grams.
+
+0. 99.2   70 seconds
+1. 99.3  154 seconds
+2. 99.5  120 seconds
+3. 64.2   59 seconds
+4. 99.92 164 seconds
+5. 97.60  35 seconds
+6. 62.55  45 seconds
+7. 97.72  46 seconds
+8. 90.39  13 seconds
+9. 59.64  11 seconds
+--------------
+mean: 87
+
+Way. Too. Slow.  And not much better than the previous scheme.
+
+Maybe try 'posterior decoding'?
